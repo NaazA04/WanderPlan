@@ -26,7 +26,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('WanderPlan'), findsOneWidget);
-    expect(find.text('Places to explore'), findsOneWidget);
+    expect(find.text('FEATURED PLACES'), findsOneWidget);
 
     // 3. Add an attraction to Day 1, another to Day 2, and save an attraction
     final gateway = attractions.firstWhere((a) => a.id == 'gateway');
@@ -62,7 +62,7 @@ void main() {
     // Verify directly on MainNavigation/Explore and not TripSetupScreen
     expect(find.textContaining('Let\'s plan'), findsNothing);
     expect(find.text('WanderPlan'), findsOneWidget);
-    expect(find.text('Places to explore'), findsOneWidget);
+    expect(find.text('FEATURED PLACES'), findsOneWidget);
     expect(find.text('Explore'), findsOneWidget);
     expect(find.text('Itinerary'), findsOneWidget);
     expect(find.text('Saved'), findsOneWidget);

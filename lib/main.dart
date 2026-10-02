@@ -233,6 +233,7 @@ class _MainNavigationState extends State<MainNavigation> {
       bottomNavigationBar: WanderBottomNavBar(
         currentIndex: currentIndex,
         onDestinationSelected: _navigateToTab,
+        itineraryCount: widget.appState.totalPlannedPlaces,
       ),
     );
   }

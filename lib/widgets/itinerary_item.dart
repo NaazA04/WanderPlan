@@ -9,14 +9,22 @@ import 'add_to_day_sheet.dart';
 class ItineraryItem extends StatelessWidget {
   final Attraction attraction;
   final int day;
+  final int index;
   final AppState appState;
 
   const ItineraryItem({
     super.key,
     required this.attraction,
     required this.day,
+    required this.index,
     required this.appState,
   });
+
+  String _getTimeForIndex(int idx) {
+    final startHour = 9 + (idx * 2);
+    final formatted = startHour < 10 ? '0$startHour:00' : '$startHour:00';
+    return formatted;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +32,7 @@ class ItineraryItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -36,7 +44,7 @@ class ItineraryItem extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
           onTap: () {
             Navigator.pushNamed(
               context,
@@ -48,19 +56,35 @@ class ItineraryItem extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
+                // TIME PILL
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                  child: Text(
+                    _getTimeForIndex(index),
+                    style: const TextStyle(
+                      color: AppTheme.deepTeal,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(width: 8),
+
+                // THUMBNAIL PHOTO
                 ClipRRect(
                   borderRadius: BorderRadius.circular(14),
                   child: Image.network(
                     attraction.imageUrl,
-                    width: 78,
-                    height: 78,
+                    width: 68,
+                    height: 68,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
                       return Container(
-                        width: 78,
-                        height: 78,
-                        color: AppTheme.sage.withValues(alpha: 0.15),
+                        width: 68,
+                        height: 68,
+                        color: AppTheme.sage.withValues(alpha: 0.2),
                         child: const Center(
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
@@ -71,11 +95,12 @@ class ItineraryItem extends StatelessWidget {
                     },
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        width: 78,
-                        height: 78,
+                        width: 68,
+                        height: 68,
                         color: AppTheme.sage.withValues(alpha: 0.25),
                         child: const Icon(
                           Icons.image_not_supported_outlined,
+                          size: 24,
                           color: AppTheme.deepTeal,
                         ),
                       );
@@ -83,8 +108,9 @@ class ItineraryItem extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(width: 13),
+                const SizedBox(width: 12),
 
+                // DETAILS
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,18 +121,19 @@ class ItineraryItem extends StatelessWidget {
                           color: AppTheme.deepTeal,
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
-                          letterSpacing: 1,
+                          letterSpacing: 1.1,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 3),
                       Text(
                         attraction.name,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           color: AppTheme.charcoal,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.2,
                         ),
                       ),
                       const SizedBox(height: 5),
@@ -114,29 +141,31 @@ class ItineraryItem extends StatelessWidget {
                         children: [
                           const Icon(
                             Icons.schedule,
-                            size: 14,
+                            size: 13,
                             color: AppTheme.mutedGrey,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 3),
                           Text(
-                            '${attraction.duration} hrs',
+                            '${attraction.duration} hr',
                             style: const TextStyle(
                               color: AppTheme.mutedGrey,
                               fontSize: 11,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 8),
                           const Icon(
                             Icons.star_rounded,
                             size: 14,
                             color: AppTheme.terracotta,
                           ),
-                          const SizedBox(width: 3),
+                          const SizedBox(width: 2),
                           Text(
                             '${attraction.rating}',
                             style: const TextStyle(
                               color: AppTheme.mutedGrey,
                               fontSize: 11,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -145,65 +174,50 @@ class ItineraryItem extends StatelessWidget {
                   ),
                 ),
 
-                IconButton(
-                  tooltip: 'Options',
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      backgroundColor: Colors.white,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
-                      ),
-                      builder: (sheetContext) {
-                        return SafeArea(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                ListTile(
-                                  leading: const Icon(
-                                    Icons.calendar_month_outlined,
-                                    color: AppTheme.deepTeal,
-                                  ),
-                                  title: const Text('Move to another day'),
-                                  onTap: () {
-                                    Navigator.pop(sheetContext);
-                                    showModalBottomSheet(
-                                      context: context,
-                                      isScrollControlled: true,
-                                      backgroundColor: Colors.transparent,
-                                      builder: (_) => AddToDaySheet(
-                                        attraction: attraction,
-                                        appState: appState,
-                                      ),
-                                    );
-                                  },
-                                ),
-                                ListTile(
-                                  leading: const Icon(
-                                    Icons.delete_outline,
-                                    color: AppTheme.terracotta,
-                                  ),
-                                  title: const Text(
-                                    'Remove from itinerary',
-                                    style: TextStyle(color: AppTheme.terracotta),
-                                  ),
-                                  onTap: () async {
-                                    await appState.removeFromDay(attraction, day);
-                                    if (sheetContext.mounted) {
-                                      Navigator.pop(sheetContext);
-                                    }
-                                  },
-                                ),
-                              ],
-                            ),
+                // ACTIONS COLUMN
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // MOVE TO ANOTHER DAY
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (_) => AddToDaySheet(
+                            attraction: attraction,
+                            appState: appState,
                           ),
                         );
                       },
-                    );
-                  },
-                  icon: const Icon(Icons.more_vert),
+                      child: const Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.drive_file_move_outline,
+                          size: 18,
+                          color: AppTheme.mutedGrey,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // REMOVE BUTTON
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () async {
+                        await appState.removeFromDay(attraction, day);
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.close,
+                          size: 18,
+                          color: AppTheme.mutedGrey,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

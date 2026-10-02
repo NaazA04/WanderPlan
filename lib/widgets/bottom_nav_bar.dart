@@ -5,11 +5,13 @@ import '../theme/app_theme.dart';
 class WanderBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
+  final int itineraryCount;
 
   const WanderBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onDestinationSelected,
+    this.itineraryCount = 0,
   });
 
   @override
@@ -17,27 +19,54 @@ class WanderBottomNavBar extends StatelessWidget {
     return NavigationBar(
       selectedIndex: currentIndex,
       onDestinationSelected: onDestinationSelected,
-      indicatorColor: AppTheme.sage.withValues(alpha: 0.3),
+      indicatorColor: AppTheme.sage.withValues(alpha: 0.35),
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.transparent,
-      elevation: 4,
-      destinations: const [
-        NavigationDestination(
+      elevation: 8,
+      height: 65,
+      destinations: [
+        const NavigationDestination(
           icon: Icon(Icons.explore_outlined, color: AppTheme.charcoal),
           selectedIcon: Icon(Icons.explore, color: AppTheme.deepTeal),
           label: 'Explore',
         ),
         NavigationDestination(
-          icon: Icon(Icons.map_outlined, color: AppTheme.charcoal),
-          selectedIcon: Icon(Icons.map, color: AppTheme.deepTeal),
+          icon: itineraryCount > 0
+              ? Badge(
+                  backgroundColor: AppTheme.deepTeal,
+                  label: Text(
+                    '$itineraryCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  child: const Icon(Icons.map_outlined, color: AppTheme.charcoal),
+                )
+              : const Icon(Icons.map_outlined, color: AppTheme.charcoal),
+          selectedIcon: itineraryCount > 0
+              ? Badge(
+                  backgroundColor: AppTheme.deepTeal,
+                  label: Text(
+                    '$itineraryCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  child: const Icon(Icons.map, color: AppTheme.deepTeal),
+                )
+              : const Icon(Icons.map, color: AppTheme.deepTeal),
           label: 'Itinerary',
         ),
-        NavigationDestination(
+        const NavigationDestination(
           icon: Icon(Icons.favorite_border, color: AppTheme.charcoal),
           selectedIcon: Icon(Icons.favorite, color: AppTheme.terracotta),
           label: 'Saved',
         ),
-        NavigationDestination(
+        const NavigationDestination(
           icon: Icon(Icons.person_outline, color: AppTheme.charcoal),
           selectedIcon: Icon(Icons.person, color: AppTheme.deepTeal),
           label: 'Profile',

@@ -24,297 +24,335 @@ class AttractionDetailScreen extends StatelessWidget {
         final assignedDay = appState.dayContaining(attraction);
 
         return Scaffold(
-          backgroundColor: AppTheme.warmCream,
+          backgroundColor: Colors.white,
           body: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 700),
+              constraints: const BoxConstraints(maxWidth: 600),
               child: CustomScrollView(
                 slivers: [
-                  SliverAppBar(
-                    expandedHeight: 330,
-                    pinned: true,
-                    backgroundColor: AppTheme.deepTeal,
-                    foregroundColor: Colors.white,
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.white.withValues(alpha: 0.85),
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_back, color: AppTheme.charcoal),
-                        onPressed: () => Navigator.pop(context),
-                      ),
-                    ),
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          Image.network(
+                  // FULL BLEED SCENIC IMAGE WITH FLOATING ACTIONS
+                  SliverToBoxAdapter(
+                    child: Stack(
+                      children: [
+                        SizedBox(
+                          height: 380,
+                          width: double.infinity,
+                          child: Image.network(
                             attraction.imageUrl,
                             fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Container(
-                                color: AppTheme.deepTeal,
-                                child: const Center(
-                                  child: CircularProgressIndicator(color: Colors.white),
-                                ),
-                              );
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: AppTheme.deepTeal,
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.landscape,
-                                    size: 50,
-                                    color: Colors.white70,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.black.withValues(alpha: 0.35),
-                                  Colors.transparent,
-                                  Colors.black.withValues(alpha: 0.65),
-                                ],
+                            errorBuilder: (context, url, error) => Container(
+                              color: AppTheme.deepTeal,
+                              child: const Center(
+                                child: Icon(Icons.landscape, size: 60, color: Colors.white70),
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 12),
-                        child: CircleAvatar(
-                          backgroundColor: Colors.white.withValues(alpha: 0.9),
-                          child: IconButton(
-                            tooltip: isSaved ? 'Remove from saved' : 'Save attraction',
-                            onPressed: () {
-                              appState.toggleSaved(attraction);
-                            },
-                            icon: Icon(
-                              isSaved ? Icons.favorite : Icons.favorite_border,
-                              color: isSaved ? AppTheme.terracotta : AppTheme.charcoal,
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
 
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 30),
-                    sliver: SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                        // TOP NAVIGATION BUTTONS
+                        Positioned(
+                          top: MediaQuery.of(context).padding.top + 10,
+                          left: 18,
+                          right: 18,
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: AppTheme.deepTeal.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  attraction.category.toUpperCase(),
-                                  style: const TextStyle(
-                                    color: AppTheme.deepTeal,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 1.2,
-                                  ),
+                              CircleAvatar(
+                                backgroundColor: Colors.white.withValues(alpha: 0.9),
+                                radius: 20,
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: const Icon(Icons.arrow_back, color: AppTheme.charcoal, size: 20),
+                                  onPressed: () => Navigator.pop(context),
                                 ),
                               ),
-                              if (assignedDay != null)
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.sage.withValues(alpha: 0.25),
-                                    borderRadius: BorderRadius.circular(8),
+                              CircleAvatar(
+                                backgroundColor: Colors.white.withValues(alpha: 0.9),
+                                radius: 20,
+                                child: IconButton(
+                                  padding: EdgeInsets.zero,
+                                  icon: Icon(
+                                    isSaved ? Icons.favorite : Icons.favorite_border,
+                                    color: isSaved ? AppTheme.deepTeal : AppTheme.charcoal,
+                                    size: 20,
                                   ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.check_circle,
-                                        size: 14,
-                                        color: AppTheme.deepTeal,
+                                  onPressed: () {
+                                    appState.toggleSaved(attraction);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // COLLECTION PILL TAG
+                        Positioned(
+                          bottom: 24,
+                          right: 18,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withValues(alpha: 0.6),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${attraction.destination} collection',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // ATTRACTION DETAILS CONTENT
+                  SliverToBoxAdapter(
+                    child: Transform.translate(
+                      offset: const Offset(0, -16),
+                      child: Container(
+                        padding: const EdgeInsets.fromLTRB(22, 24, 22, 36),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // CATEGORY
+                            Text(
+                              attraction.category.toUpperCase(),
+                              style: const TextStyle(
+                                color: AppTheme.deepTeal,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1.4,
+                              ),
+                            ),
+
+                            const SizedBox(height: 6),
+
+                            // TITLE
+                            Text(
+                              attraction.name,
+                              style: const TextStyle(
+                                color: AppTheme.charcoal,
+                                fontSize: 30,
+                                height: 1.15,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.5,
+                              ),
+                            ),
+
+                            const SizedBox(height: 20),
+
+                            // 3-COLUMN STATS BAR
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Row(
+                                children: [
+                                  _statCol(
+                                    icon: Icons.star_rounded,
+                                    iconColor: AppTheme.terracotta,
+                                    topText: '${attraction.rating}',
+                                    bottomText: 'Rating',
+                                  ),
+                                  Container(height: 26, width: 1, color: Colors.black12),
+                                  _statCol(
+                                    icon: Icons.schedule,
+                                    iconColor: AppTheme.deepTeal,
+                                    topText: '${attraction.duration} hr',
+                                    bottomText: 'Visit',
+                                  ),
+                                  Container(height: 26, width: 1, color: Colors.black12),
+                                  _statCol(
+                                    icon: Icons.location_on_outlined,
+                                    iconColor: AppTheme.deepTeal,
+                                    topText: attraction.location.split(',').first.trim(),
+                                    bottomText: attraction.destination,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 26),
+
+                            // ABOUT THIS PLACE
+                            const Text(
+                              'About this place',
+                              style: TextStyle(
+                                color: AppTheme.charcoal,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+
+                            const SizedBox(height: 14),
+
+                            // PRIMARY ITINERARY ACTION BUTTON
+                            if (assignedDay != null) ...[
+                              Container(
+                                width: double.infinity,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFD8E5DF),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(16),
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (_) => AddToDaySheet(
+                                        attraction: attraction,
+                                        appState: appState,
                                       ),
-                                      const SizedBox(width: 4),
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.check_circle_outline, color: AppTheme.deepTeal, size: 20),
+                                      const SizedBox(width: 8),
                                       Text(
-                                        'In Day $assignedDay',
+                                        'Added to Day $assignedDay',
                                         style: const TextStyle(
                                           color: AppTheme.deepTeal,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 15,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          Text(
-                            attraction.name,
-                            style: const TextStyle(
-                              color: AppTheme.charcoal,
-                              fontSize: 30,
-                              height: 1.1,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-
-                          const SizedBox(height: 16),
-
-                          Row(
-                            children: [
-                              _info(Icons.star_rounded, '${attraction.rating} Rating'),
-                              _info(Icons.schedule_outlined, '${attraction.duration} hrs'),
-                              Expanded(
-                                child: _info(Icons.location_on_outlined, attraction.location),
                               ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 28),
-
-                          const Text(
-                            'About this place',
-                            style: TextStyle(
-                              color: AppTheme.charcoal,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-
-                          const SizedBox(height: 10),
-
-                          Text(
-                            attraction.description,
-                            style: const TextStyle(
-                              color: AppTheme.mutedGrey,
-                              fontSize: 15,
-                              height: 1.6,
-                            ),
-                          ),
-
-                          const SizedBox(height: 28),
-
-                          const Text(
-                            'Good to know',
-                            style: TextStyle(
-                              color: AppTheme.charcoal,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-
-                          const SizedBox(height: 14),
-
-                          Container(
-                            padding: const EdgeInsets.all(18),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.03),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                _goodToKnow(
-                                  Icons.schedule,
-                                  'Visit time',
-                                  '${attraction.duration} hrs',
-                                ),
-                                _goodToKnow(
-                                  Icons.location_on_outlined,
-                                  'Location',
-                                  attraction.location,
-                                ),
-                                _goodToKnow(
-                                  Icons.wb_sunny_outlined,
-                                  'Best time',
-                                  'Morning',
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          const SizedBox(height: 32),
-
-                          SizedBox(
-                            width: double.infinity,
-                            height: 54,
-                            child: FilledButton.icon(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  backgroundColor: Colors.transparent,
-                                  builder: (_) => AddToDaySheet(
-                                    attraction: attraction,
-                                    appState: appState,
+                              const SizedBox(height: 8),
+                              Center(
+                                child: TextButton.icon(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: const Text(
+                                    'View itinerary',
+                                    style: TextStyle(
+                                      color: AppTheme.deepTeal,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 13,
+                                    ),
                                   ),
-                                );
-                              },
-                              icon: Icon(assignedDay != null ? Icons.edit_calendar : Icons.add),
-                              label: Text(
-                                assignedDay != null
-                                    ? 'Change itinerary day (Day $assignedDay)'
-                                    : 'Add to itinerary',
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
+                                  label: const Icon(Icons.arrow_forward, size: 14, color: AppTheme.deepTeal),
                                 ),
                               ),
-                              style: FilledButton.styleFrom(
-                                backgroundColor: AppTheme.deepTeal,
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                            ] else ...[
+                              SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: FilledButton.icon(
+                                  onPressed: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
+                                      builder: (_) => AddToDaySheet(
+                                        attraction: attraction,
+                                        appState: appState,
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(Icons.add, size: 20),
+                                  label: const Text(
+                                    'Add to itinerary',
+                                    style: TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                                  ),
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: AppTheme.deepTeal,
+                                    foregroundColor: Colors.white,
+                                    elevation: 0,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
                                 ),
+                              ),
+                              const SizedBox(height: 14),
+                            ],
+
+                            const SizedBox(height: 12),
+
+                            // LEAD DESCRIPTION
+                            Text(
+                              'Arrive early for soft light and a quieter promenade.',
+                              style: TextStyle(
+                                color: AppTheme.charcoal.withValues(alpha: 0.9),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                height: 1.5,
                               ),
                             ),
-                          ),
 
-                          const SizedBox(height: 12),
+                            const SizedBox(height: 10),
 
-                          SizedBox(
-                            width: double.infinity,
-                            height: 48,
-                            child: OutlinedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: AppTheme.deepTeal,
-                                side: const BorderSide(color: AppTheme.sage),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                              ),
-                              child: const Text(
-                                'Back to exploring',
-                                style: TextStyle(fontWeight: FontWeight.w600),
+                            // FULL BODY DESCRIPTION
+                            Text(
+                              attraction.description,
+                              style: const TextStyle(
+                                color: AppTheme.mutedGrey,
+                                fontSize: 14,
+                                height: 1.6,
                               ),
                             ),
-                          ),
-                        ],
+
+                            const SizedBox(height: 30),
+
+                            // GOOD TO KNOW
+                            const Text(
+                              'Good to know',
+                              style: TextStyle(
+                                color: AppTheme.charcoal,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+
+                            const SizedBox(height: 14),
+
+                            Container(
+                              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
+                              decoration: BoxDecoration(
+                                color: AppTheme.warmCream,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                children: [
+                                  _goodToKnowBox(
+                                    icon: Icons.wb_sunny_outlined,
+                                    label: 'Best time',
+                                    value: 'Morning / Evening',
+                                  ),
+                                  _goodToKnowBox(
+                                    icon: Icons.schedule,
+                                    label: 'Visit duration',
+                                    value: '${attraction.duration} hr',
+                                  ),
+                                  _goodToKnowBox(
+                                    icon: Icons.location_on_outlined,
+                                    label: 'Location',
+                                    value: attraction.location.split(',').first.trim(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -327,23 +365,41 @@ class AttractionDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _info(IconData icon, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 14),
+  Widget _statCol({
+    required IconData icon,
+    required Color iconColor,
+    required String topText,
+    required String bottomText,
+  }) {
+    return Expanded(
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 16, color: AppTheme.terracotta),
-          const SizedBox(width: 4),
+          Icon(icon, color: iconColor, size: 18),
+          const SizedBox(width: 6),
           Flexible(
-            child: Text(
-              value,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppTheme.mutedGrey,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  topText,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                    color: AppTheme.charcoal,
+                  ),
+                ),
+                Text(
+                  bottomText,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppTheme.mutedGrey,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -351,30 +407,41 @@ class AttractionDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _goodToKnow(IconData icon, String label, String value) {
+  Widget _goodToKnowBox({
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
     return Expanded(
       child: Column(
         children: [
-          Icon(icon, color: AppTheme.deepTeal, size: 22),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppTheme.sage.withValues(alpha: 0.25),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 18, color: AppTheme.deepTeal),
+          ),
           const SizedBox(height: 6),
           Text(
             label,
             style: const TextStyle(
+              fontSize: 10,
               color: AppTheme.mutedGrey,
-              fontSize: 11,
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 2),
           Text(
             value,
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              color: AppTheme.charcoal,
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
+              color: AppTheme.charcoal,
             ),
           ),
         ],
